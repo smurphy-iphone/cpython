@@ -33,6 +33,9 @@ There is no `configure`/`make` on Windows; the build is driven by `.bat` scripts
 `build.bat -h` lists all options, including `--pgo` for a PGO build and `-E` to skip re-fetching external dependencies (`get_externals.bat`).
 - Setting an optimization flag as an env var uses PowerShell's `$env:` syntax rather than cmd's `set`, e.g. `$env:WITH_COMPUTED_GOTOS="true"` before running `build.bat` — or pass it directly as an MSBuild property: `.\PCbuild\build.bat "/p:WITH_COMPUTED_GOTOS=true"`.
 - The debug interpreter built this way is `PCbuild\<platform>\python_d.exe` (not `.\python`).
+- External libraries CPython doesn't control (OpenSSL, Tcl/Tk, libffi, etc.) aren't in this tree: `build.bat` fetches them automatically into `..\externals` via `get_externals.bat` (override the location with the `EXTERNALS_DIR` env var). OpenSSL and Tcl/Tk specifically can be rebuilt from source with `.\PCbuild\prepare_ssl.bat` / `.\PCbuild\prepare_tcltk.bat`.
+- `clang-cl` is supported as an alternative to MSVC: `.\PCbuild\build.bat "/p:PlatformToolset=ClangCL"`.
+- Adding a new C extension module needs a matching `.vcxproj`/`.vcxproj.filters` pair under `PCbuild/` in addition to the `Modules/*.c` source — there's a step-by-step checklist at the bottom of `PCbuild/readme.txt` ("Add a new project").
 
 ## Testing
 

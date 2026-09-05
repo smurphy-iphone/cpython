@@ -21,6 +21,19 @@ make -j$(nproc)
 - Platform-specific build docs: `Mac/README.rst` (macOS), `PCbuild/readme.txt` (Windows), `Android/README.md`, `iOS/README.rst`.
 - The resulting interpreter is `./python` (built in the repo root) — use it directly, e.g. `./python -c '...'`, rather than assuming a `python3` on PATH.
 
+### Windows (PowerShell)
+
+There is no `configure`/`make` on Windows; the build is driven by `.bat` scripts under `PCbuild/` (built on MSVC — Visual Studio 2017+ with the Python workload). From a PowerShell prompt, invoke them with a `.\` prefix:
+```
+.\PCbuild\build.bat          # Release, 32-bit Win32 by default
+.\PCbuild\build.bat -d       # Debug build (adds "_d" to binary names, e.g. python_d.exe)
+.\PCbuild\build.bat -p x64   # 64-bit
+.\PCbuild\rt.bat -q          # run the test suite against the build just produced
+```
+`build.bat -h` lists all options, including `--pgo` for a PGO build and `-E` to skip re-fetching external dependencies (`get_externals.bat`).
+- Setting an optimization flag as an env var uses PowerShell's `$env:` syntax rather than cmd's `set`, e.g. `$env:WITH_COMPUTED_GOTOS="true"` before running `build.bat` — or pass it directly as an MSBuild property: `.\PCbuild\build.bat "/p:WITH_COMPUTED_GOTOS=true"`.
+- The debug interpreter built this way is `PCbuild\<platform>\python_d.exe` (not `.\python`).
+
 ## Testing
 
 Run the whole suite:
